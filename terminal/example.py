@@ -17,10 +17,11 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-from .terminal import Terminal
+import terminal
 
 def main(args=None):
-    term = Terminal()
+    terminal.init_terminal(welcome=True)
+    terminal.ok('Nice!')
 
 
 if __name__ == '__main__':

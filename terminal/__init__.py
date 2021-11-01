@@ -16,6 +16,55 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+from .terminal import Terminal
 from .example import main
 
-__all__ = ['main']
+__terminal = None
+
+__all__ = [
+    'main',
+    'init_terminal',
+    'error',
+    'fail',
+    'info',
+    'bold_info',
+    'ok',
+    'out',
+    'warning',
+]
+
+def init_terminal(welcome: bool = False) -> None:
+    global __terminal  # pylint: disable=global-statement, invalid-name
+    if not __terminal:
+        __terminal = Terminal(welcome=welcome)
+
+def ok(message: str) -> None:
+    __terminal.ok(message)
+
+
+def fail(message: str) -> None:
+    __terminal.fail(message)
+
+
+def error(message: str) -> None:
+    __terminal.error(message)
+
+
+def warning(message: str) -> None:
+    __terminal.warning(message)
+
+
+def info(message: str) -> None:
+    __terminal.info(message)
+
+
+def bold_info(message: str) -> None:
+    __terminal.bold_info(message)
+
+
+def out(message: str):
+    __terminal.print(message)
+
+
+def overwrite(message: str, new_line: bool = False):
+    __terminal.print_overwrite(message, new_line=new_line)

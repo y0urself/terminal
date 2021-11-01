@@ -27,30 +27,30 @@ import colorful as cf
 TERMINAL_SIZE_FALLBACK = (80, 24)  # use a small standard size as fallback
 
 
-GB_ASCII = """
-                        @@     @@@                  
-                        @{g}%{b}@   @{g}(#{b}%@                 
-                        @{g}%##{b}@@@(###{b}@@               
-                        @{g}##{b}#@&&{g}(####{b}&@              
-                        @#{g}((({b}@{g}((#####{b}@@@            
-                     @{g}(((############{b}@@{g}#({b}@          
-                  @{g}(#################{b}%@{g}##({b}@         
-               @{g}((##{b}@@@{g}%##################({b}@        
-             &{g}((###{b}@/    @{g}#########{b}&@@@@@&{g}#({b}@       
-           #{g}((####{b}@      &{g}######{b}@@%{g}#####{b}%@#@@&@     
-         ({g}((#####{b}@,   @@{g}######{b}%@{g}########{b}#{g}@@@{g}#((({b}@@  
-       &{g}((#####################{b}@@{g}###########{b}&@@@@@@@
-     @{g}(((########################{b}@{g}############{b}@@{g}##{b}(@
-    &{g}((#######################{b}@@@@%{g}###########{b}@#{g}##{b}&@
-  @{g}(/#&####################{b}@@   @@@@{g}#########{b}&@@@@  
- @{g}((#@@@@{g}################{b}@@    @@  @&{g}#######{b}@        
-@{g}(###################{b}#@@&   %@    @&{g}######{b}@@        
-@{g}##############{b}@@     .@@&    @%{g}######{b}&@            
-  @%{g}##########{b}@&   @       &@{g}#######{b}@@@             
-    @@%{g}#####{b}&@@%        @&{g}######{b}#@@                 
-                 @#&@@#{g}######{b}@@@                    
-                   #{g}###{b}#&@@                         
-""".format(g=cf.green, b=cf.reset)
+GB_ASCII = [
+"                         @@     @@@                  ",
+"                         @{g}%{b}@   @{g}(#{b}%@                 ".format(g=cf.green, b=cf.reset),
+"                         @{g}%##{b}@@@{g}(###{b}@@               ".format(g=cf.green, b=cf.reset),
+"                         @{g}##{b}#@&&{g}(####{b}&@              ".format(g=cf.green, b=cf.reset),
+"                         @#{g}((({b}@{g}((#####{b}@@@            ".format(g=cf.green, b=cf.reset),
+"                      @{g}(((############{b}@@{g}#({b}@          ".format(g=cf.green, b=cf.reset),
+"                   @{g}(#################{b}%@{g}##({b}@         ".format(g=cf.green, b=cf.reset),
+"                @{g}((##{b}@@@{g}%##################({b}@        ".format(g=cf.green, b=cf.reset),
+"              &{g}((###{b}@/    @{g}#########{b}&@@@@@&{g}#({b}@       ".format(g=cf.green, b=cf.reset),
+"            #{g}((####{b}@      &{g}######{b}@@%{g}#####{b}%@#@@&@     ".format(g=cf.green, b=cf.reset),
+"          ({g}((#####{b}@,   @@{g}######{b}%@{g}########{b}#@@@{g}#((({b}@@  ".format(g=cf.green, b=cf.reset),
+"        &{g}((#####################{b}@@{g}###########{b}&@@@@@@@".format(g=cf.green, b=cf.reset),
+"      @{g}(((########################{b}@{g}############{b}@@{g}##{b}(@".format(g=cf.green, b=cf.reset),
+"     &{g}((#######################{b}@@@@%{g}###########{b}@#{g}##{b}&@".format(g=cf.green, b=cf.reset),
+"   @{g}(/#&####################{b}@@   @@@@{g}#########{b}&@@@@  ".format(g=cf.green, b=cf.reset),
+"  @{g}((#@@@@{g}################{b}@@    @@  @&{g}#######{b}@       ".format(g=cf.green, b=cf.reset),
+" @{g}(###################{b}#@@&   %@    @&{g}######{b}@@        ".format(g=cf.green, b=cf.reset),
+" @{g}##############{b}@@     .@@&    @%{g}######{b}&@            ".format(g=cf.green, b=cf.reset),
+"   @%{g}##########{b}@&   @       &@{g}#######{b}@@@             ".format(g=cf.green, b=cf.reset),
+"     @@%{g}#####{b}&@@%        @&{g}######{b}#@@                 ".format(g=cf.green, b=cf.reset),
+"                  @#&@@#{g}######{b}@@@                    ".format(g=cf.green, b=cf.reset),
+"                    #{g}###{b}#&@@                         ".format(g=cf.green, b=cf.reset),
+]
 
 class Signs(Enum):
     FAIL = '\N{HEAVY MULTIPLICATION X}'
@@ -68,10 +68,10 @@ STATUS_LEN = 2
 
 
 class Terminal:
-    def __init__(self):
+    def __init__(self, welcome:bool = False) -> None:
         self._indent = 0
-
-        self._print_welcome()
+        if welcome:
+            self._print_welcome()
 
     @staticmethod
     def get_width() -> int:
@@ -82,8 +82,13 @@ class Terminal:
         return width
 
     def _print_welcome(self):
-        print(cf.reset)
-        print(GB_ASCII)
+        whitespaces = int((self.get_width() - 54 - 2) / 2)
+        print(f"+{(int(self.get_width() / 2) * 2 - 2) * '-'}+")
+        for line in GB_ASCII:
+            print(f"|{whitespaces * ' '}{line}{whitespaces * ' '}|")
+        print(f"+{(int(self.get_width() / 2) * 2 - 2) * '-'}+")
+        print(f"{(whitespaces + 18) * ' '}Greenbone Terminal{(whitespaces + 18) * ' '}")
+
 
     def _print_status(
         self,
