@@ -18,11 +18,31 @@
 #
 
 import terminal
+import requests
 
 def main(args=None):
     terminal.init_terminal(welcome=True)
     terminal.ok('Nice!')
 
+    url = "https://www.dundeecity.gov.uk/sites/default/files/publications/civic_renewal_forms.zip"
+
+    file_name = url.split('/')[-1]
+    u = requests.get(url, stream=True, timeout=10000)
+    f = open(file_name, 'wb')
+
+    file_size_dl = 0
+    chunk_size = 8192
+
+    file_size = u.headers.get('content-length')
+    terminal.load_status(msg=file_name, total=int(file_size))
+    for content in u.iter_content(chunk_size=chunk_size):
+
+        file_size_dl += len(content)
+        f.write(content)
+
+        terminal.load_status(current=file_size_dl)
+
+    f.close()
 
 if __name__ == '__main__':
     main()

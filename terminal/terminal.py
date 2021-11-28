@@ -24,6 +24,8 @@ from typing import Callable, Generator
 
 import colorful as cf
 
+from terminal.loader import Loader
+
 TERMINAL_SIZE_FALLBACK = (80, 24)  # use a small standard size as fallback
 
 
@@ -72,6 +74,7 @@ class Terminal:
         self._indent = 0
         if welcome:
             self._print_welcome()
+        self.loader = None
 
     @staticmethod
     def get_width() -> int:
@@ -139,6 +142,7 @@ class Terminal:
         self._indent = 0
 
     def print(self, *messages: str, style: Callable = cf.reset) -> None:
+        """ Print the prepared message """
         message = ''.join(messages)
         self._print_status(message, Signs.NONE, cf.white, style)
 
@@ -173,3 +177,28 @@ class Terminal:
     def bold_info(self, message: str, style: Callable = cf.bold) -> None:
         self._print_status(message, Signs.INFO, cf.cyan, style)
 
+    def load_status(
+        self,
+        current: int = None,
+        total: int = None,
+        msg: str = None,
+        done: bool = False
+    ) -> None:
+        print_this = ''
+        if not self.loader:
+            if not total:
+                self.fail("You need to specify a total number (int) for the Loader")
+            if not msg:
+                self.fail("You need to specify a file name / msg for the Loader")
+            self.loader = Loader(
+                width=self.get_width() - self._indent - 2,
+                msg = msg,
+                total = total,
+            )
+        if done:
+            print_this = self.loader.finish()
+            self.loader = None
+        if current:
+            print_this = self.loader.load(current=current)
+        if print_this:
+            self.print_overwrite(print_this)
