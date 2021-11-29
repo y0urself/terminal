@@ -41,6 +41,7 @@ def main(args=None):
         f.write(content)
 
         terminal.load_status(current=file_size_dl)
+    terminal.load_status(done=True)
 
     f.close()
 

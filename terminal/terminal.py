@@ -159,23 +159,23 @@ class Terminal:
             overwrite=True,
         )
 
-    def ok(self, message: str, style: Callable = cf.reset) -> None:
-        self._print_status(message, Signs.OK, cf.green, style)
+    def ok(self, message: str, style: Callable = cf.reset, new_line: bool = True, overwrite: bool = False) -> None:
+        self._print_status(message=message, status=Signs.OK, color=cf.green, style=style, new_line=new_line, overwrite=overwrite)
 
     def fail(self, message: str, style: Callable = cf.reset) -> None:
-        self._print_status(message, Signs.FAIL, cf.red, style)
+        self._print_status(message=message, status=Signs.FAIL, color=cf.red, style=style)
 
     def error(self, message: str, style: Callable = cf.reset) -> None:
-        self._print_status(message, Signs.ERROR, cf.red, style)
+        self._print_status(message=message, status=Signs.ERROR, color=cf.red, style=style)
 
     def warning(self, message: str, style: Callable = cf.reset) -> None:
-        self._print_status(message, Signs.WARNING, cf.yellow, style)
+        self._print_status(message=message, status=Signs.WARNING, color=cf.yellow, style=style)
 
     def info(self, message: str, style: Callable = cf.reset) -> None:
-        self._print_status(message, Signs.INFO, cf.cyan, style)
+        self._print_status(message=message, status=Signs.INFO, color=cf.cyan, style=style)
 
     def bold_info(self, message: str, style: Callable = cf.bold) -> None:
-        self._print_status(message, Signs.INFO, cf.cyan, style)
+        self._print_status(message=message, status= Signs.INFO, color=cf.cyan, style=style)
 
     def load_status(
         self,
@@ -196,9 +196,7 @@ class Terminal:
                 total = total,
             )
         if done:
-            print_this = self.loader.finish()
+            self.ok(self.loader.finish(), overwrite=True)
             self.loader = None
         if current:
-            print_this = self.loader.load(current=current)
-        if print_this:
-            self.print_overwrite(print_this)
+            self.print_overwrite(self.loader.load(current=current))
