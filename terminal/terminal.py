@@ -65,6 +65,7 @@ class Signs(Enum):
     def __str__(self):
         return f'{self.value}'
 
+#TODO implement easy acces to bold/italic etc
 
 STATUS_LEN = 2
 
@@ -79,7 +80,7 @@ class Terminal:
     @staticmethod
     def get_width() -> int:
         """
-        Get the width of the terminal window
+        Get the width of the terminal window in order to correctly format the messages
         """
         width, _ = get_terminal_size(TERMINAL_SIZE_FALLBACK)
         return width
@@ -128,6 +129,18 @@ class Terminal:
 
     @contextmanager
     def indent(self, indentation: int = 4) -> Generator:
+        """ Indent the messages within the context with the given number of spaces
+        Use in an with statement:
+
+        ```code
+        term = Terminal()
+        with term.indent():
+            term.info("Nice indentation!")
+        ```
+
+        Arguments:
+            indentation     Number of spaces to indent
+        """
         current_indent = self._indent
         self.add_indent(indentation)
 
@@ -136,9 +149,11 @@ class Terminal:
         self._indent = current_indent
 
     def add_indent(self, indentation: int = 4) -> None:
+        """ Indent the future messages by the given number of spaces """
         self._indent += indentation
 
     def reset_indent(self) -> None:
+        """ Resets the indentation to 0 """
         self._indent = 0
 
     def print(self, *messages: str, style: Callable = cf.reset) -> None:
@@ -149,6 +164,13 @@ class Terminal:
     def print_overwrite(
         self, *messages: str, style: Callable = cf.reset, new_line: bool = False
     ) -> None:
+        """ Overwrite the message in the current line with this new message
+
+        Arguments:
+            message     The message that should be printed
+            style       Set the style to use (e.g. bold or italic)
+            new_line    Print statement with a newline at the end (True) or not (False)
+        """
         message = ''.join(messages)
         self._print_status(
             message,
@@ -160,43 +182,91 @@ class Terminal:
         )
 
     def ok(self, message: str, style: Callable = cf.reset, new_line: bool = True, overwrite: bool = False) -> None:
+        """ Print a message, that represents an positive result of an action
+
+        Arguments:
+            message     The message that should be printed
+            style       Set the style to use (e.g. bold or italic)
+        """
         self._print_status(message=message, status=Signs.OK, color=cf.green, style=style, new_line=new_line, overwrite=overwrite)
 
     def fail(self, message: str, style: Callable = cf.reset) -> None:
+        """ Print a message, that represents a failure within an action
+
+        Arguments:
+            message     The message that should be printed
+            style       Set the style to use (e.g. bold or italic)
+        """
         self._print_status(message=message, status=Signs.FAIL, color=cf.red, style=style)
 
     def error(self, message: str, style: Callable = cf.reset) -> None:
+        """ Print a message, that represents an exceptional behaviour, that stops the execution of the process
+
+        Arguments:
+            message     The message that should be printed
+            style       Set the style to use (e.g. bold or italic)
+        """
         self._print_status(message=message, status=Signs.ERROR, color=cf.red, style=style)
 
     def warning(self, message: str, style: Callable = cf.reset) -> None:
+        """ Print a message, that should be displayed as a warning (e.g. something is missing/wrong/unexpected) 
+
+        Arguments:
+            message     The message that should be printed
+            style       Set the style to use (e.g. bold or italic)
+        """
         self._print_status(message=message, status=Signs.WARNING, color=cf.yellow, style=style)
 
     def info(self, message: str, style: Callable = cf.reset) -> None:
+        """ Print a message, that informs the user about an important event or other information
+
+        Arguments:
+            message     The message that should be printed
+            style       Set the style to use (e.g. bold or italic)
+        """
         self._print_status(message=message, status=Signs.INFO, color=cf.cyan, style=style)
 
     def bold_info(self, message: str, style: Callable = cf.bold) -> None:
+        """ Print a message, that informs the user about an important event or other information in bold
+
+        Arguments:
+            message     The message that should be printed
+            style       Set the style to use (e.g. bold or italic)
+        """
         self._print_status(message=message, status= Signs.INFO, color=cf.cyan, style=style)
 
-    def load_status(
+    def progress(
         self,
         current: int = None,
         total: int = None,
         msg: str = None,
-        done: bool = False
+        done: bool = False,
     ) -> None:
-        print_this = ''
+        """ This function can be used to print a progress bar 
+
+        Arguments:
+            current     An integral representation of the loaded part in relation to total
+            total       An integral representation of the total amout of progress (e.g. bytes to load/transfer)
+            msg         A message that will be put in front of the progress bar (e.g. filename)
+            done        Call progress with done, to finish the progress and delete the current loader instance
+        """
+        if current:
+            self.print_overwrite(self.loader.load(current=current))
+            return
         if not self.loader:
             if not total:
-                self.fail("You need to specify a total number (int) for the Loader")
+                self.fail("You need to specify a total number (int) for the progess printing")
+                return
             if not msg:
-                self.fail("You need to specify a file name / msg for the Loader")
+                self.fail("You need to specify a file name / msg for the progress printing")
+                return
             self.loader = Loader(
                 width=self.get_width() - self._indent - 2,
                 msg = msg,
                 total = total,
             )
         if done:
+            if not self.loader:
+                self.fail("There is no progress printing in progress")
             self.ok(self.loader.finish(), overwrite=True)
             self.loader = None
-        if current:
-            self.print_overwrite(self.loader.load(current=current))
