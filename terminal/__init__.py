@@ -40,6 +40,8 @@ def init_terminal(welcome: bool = False) -> None:
         __terminal = Terminal(welcome=welcome)
 
 def get_terminal() -> Terminal:
+    if not __terminal:
+        init_terminal()
     return __terminal
 
 def ok(message: str) -> None:
