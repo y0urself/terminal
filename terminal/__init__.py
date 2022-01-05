@@ -39,6 +39,9 @@ def init_terminal(welcome: bool = False) -> None:
     if not __terminal:
         __terminal = Terminal(welcome=welcome)
 
+def get_terminal() -> Terminal:
+    return __terminal
+
 def ok(message: str) -> None:
     __terminal.ok(message)
 
