@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "terminal"
+name = "pontos-terminal"
 version = "0.0.1dev1"
 description = "Common terminal maintained by y0urself"
 authors = ["Jaspar Löchte <info@greenbone.net>"]
