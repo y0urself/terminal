@@ -8,7 +8,7 @@ on:
 
 jobs:
   run-example:
-    name: Unit tests
+    name: Run the terminal example
     runs-on: 'ubuntu-latest'
     steps:
       - uses: actions/checkout@v2
