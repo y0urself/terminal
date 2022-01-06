@@ -1,0 +1,20 @@
+name: Run the example program
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  run-example:
+    name: Unit tests
+    runs-on: 'ubuntu-latest'
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install poetry and dependencies
+        uses: greenbone/actions/poetry@v1
+        with:
+          version: 3.9
+      - name: Run example
+        run: poetry run terminal-example
