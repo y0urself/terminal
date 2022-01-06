@@ -39,4 +39,4 @@ class Loader:
         bar_len = self.width - len(self.msg) - len(fix)
         hash_len =  int(math.floor(bar_len * (percent / 100)))
         space_len = bar_len - hash_len
-        return f"[{self.msg}] {percent:03}% [{'#' * hash_len}{' ' * space_len}]"
+        return f"[{self.msg}] {percent:3}% [{'#' * hash_len}{' ' * space_len}]"
