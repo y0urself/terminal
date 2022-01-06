@@ -75,5 +75,5 @@ def out(message: str):
 def overwrite(message: str, new_line: bool = False):
     __terminal.print_overwrite(message, new_line=new_line)
 
-def load_status(msg=None, current=None, total=None, done=False):
-    __terminal.load_status(msg=msg, current=current, total=total, done=done)
+def progress(msg=None, current=None, total=None, done=False):
+    __terminal.progress(msg=msg, current=current, total=total, done=done)

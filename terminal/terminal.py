@@ -242,7 +242,7 @@ class Terminal:
         msg: str = None,
         done: bool = False,
     ) -> None:
-        """ This function can be used to print a progress bar 
+        """ This function can be used to print a progress bar
 
         Arguments:
             current     An integral representation of the loaded part in relation to total

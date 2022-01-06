@@ -46,7 +46,7 @@ def main(args=None):
     with open(file_name, 'wb') as f:
 
         file_size = u.headers.get('content-length')
-        terminal.progress(msg=file_name, total=int(file_size))
+        terminal.progress(msg=file_name.name, total=int(file_size))
         for content in u.iter_content(chunk_size=chunk_size):
 
             file_size_dl += len(content)
